@@ -3,13 +3,17 @@ services:
     build: ./backend
     env_file:
       - ./backend/.env
-    ports:
-      - 8000:8000
+    expose:
+      - 8000
     volumes:
       - ./backend/src/db:/app/src/db
   frontend:
     build: ./frontend
     env_file:
       - ./frontend/.env
-    ports:
-      - 3000:5173
+    expose:
+      - 5173 
+  nginx:
+    build: ./nginx
+    ports: 
+      - 80:80
