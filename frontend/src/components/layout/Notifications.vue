@@ -1,5 +1,5 @@
 <template>
-  <notifications width="25em">
+  <notifications animation-type="velocity" speed="300" duration="8" width="24em">
     <template #body="props">
       <div class="notification" :class="props.item.type">
         <div v-html="props.item.text" />
@@ -17,7 +17,7 @@
 .notification {
   position: relative;
   margin: 1em 1em 0 0;
-  padding: 1.5em 1.5em 1.5em calc(1.5em + 0.7em);
+  padding: 1.6em 1.5em 1.6em calc(1.5em + 0.7em);
   border-radius: $radius;
   overflow: hidden;
 

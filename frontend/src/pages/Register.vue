@@ -18,21 +18,23 @@
         :items="{ student: 'Студент', teacher: 'Преподаватель' }"
       />
     </div>
-    <div v-if="role === 'student'" class="labeled-block">
-      <p>Немного информации о твоем обучении:</p>
-      <div class="v-block">
-        <input
-          v-model="studentProfile.number"
-          type="number"
-          placeholder="Номер студенческого билета"
-          required
-        />
-        <div class="h-block">
-          <input v-model="studentProfile.course" type="number" placeholder="Курс" required />
-          <input v-model="studentProfile.group" type="text" placeholder="Группа" required />
+    <Transition name="nonable">
+      <div v-if="role === 'student'" class="labeled-block">
+        <p>Немного информации о твоем обучении:</p>
+        <div class="v-block">
+          <input
+            v-model="studentProfile.number"
+            type="number"
+            placeholder="Номер студенческого билета"
+            required
+          />
+          <div class="h-block">
+            <input v-model="studentProfile.course" type="number" placeholder="Курс" required />
+            <input v-model="studentProfile.group" type="text" placeholder="Группа" required />
+          </div>
         </div>
       </div>
-    </div>
+    </Transition>
     <BaseButton :loading="loading">Создать аккаунт 🔥</BaseButton>
     <BaseButton class="auth-form__link" type="text" link="/login">Уже есть аккаунт</BaseButton>
   </AuthForm>
@@ -99,6 +101,8 @@ const register = async () => {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/css/config";
+
 .labeled-block {
   display: flex;
   flex-direction: column;
@@ -122,5 +126,23 @@ const register = async () => {
   display: flex;
   flex-direction: column;
   gap: 1em;
+}
+
+.nonable-enter-from,
+.nonable-leave-to {
+  max-height: 0;
+  overflow: hidden;
+  margin: -1em 0;
+}
+
+.nonable-enter-to,
+.nonable-leave-from {
+  max-height: 10em;
+  overflow: hidden;
+}
+
+.nonable-enter-active,
+.nonable-leave-active {
+  transition: $transition-long;
 }
 </style>

@@ -13,7 +13,14 @@ services:
       - ./frontend/.env
     expose:
       - 5173 
+    volumes:
+      - front-dist:/app/dist
   nginx:
     build: ./nginx
     ports: 
       - 80:80
+    volumes:
+      - front-dist:/app
+
+volumes:
+  front-dist:
