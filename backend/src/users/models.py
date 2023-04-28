@@ -45,10 +45,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
 
-class Achievement(models.Model):
-    student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE,
-                                related_name='achievements')
+# class Achievement(models.Model):
+    # student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE,
+                                # related_name='achievements')
 
-    is_approved = models.BooleanField(default=False)
-    is_pending = models.BooleanField(default=True)
-    message = models.TextField(null=True)
+    # is_approved = models.BooleanField(default=False)
+    # is_pending = models.BooleanField(default=True)
+    # message = models.TextField(null=True)

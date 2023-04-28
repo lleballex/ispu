@@ -75,7 +75,7 @@ onMounted(() => {
   transition: $transition;
 
   &.active {
-    color: $white;
+    color: $background;
   }
 }
 
@@ -83,7 +83,7 @@ onMounted(() => {
   position: absolute;
   top: 0.3em;
   bottom: 0.3em;
-  border-radius: calc($radius - .3em);
+  border-radius: calc($radius - 0.3em);
   background: $accent;
   transition: $transition;
 }

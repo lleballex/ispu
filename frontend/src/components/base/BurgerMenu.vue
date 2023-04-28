@@ -72,6 +72,7 @@ const onItemClick = (itemOnClick?: () => void) => {
   overflow: hidden;
   border-radius: $radius;
   box-shadow: $shadow;
+  background: $background;
   transition: $transition;
 
   .burger.active & {

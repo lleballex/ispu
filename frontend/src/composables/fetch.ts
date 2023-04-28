@@ -1,7 +1,7 @@
 import { useCookies } from "vue3-cookies"
 
 interface Data {
-  method?: 'GET' | 'POST'
+  method?: "GET" | "POST"
   body?: {
     [key: string]: any
   }
@@ -9,7 +9,7 @@ interface Data {
 
 const { cookies } = useCookies()
 
-export const useFetch = async (url: string, data?: Data) => {
+export const useFetch = async <IData>(url: string, data?: Data) => {
   const headers: { [key: string]: string } = {}
   const authToken = cookies.get("authToken")
   if (authToken) {
@@ -17,7 +17,7 @@ export const useFetch = async (url: string, data?: Data) => {
   }
 
   const res = await fetch(`${import.meta.env.VITE_API_URL}/${url}/`, {
-    method: data?.method || 'GET',
+    method: data?.method || "GET",
     body: JSON.stringify(data?.body),
     headers: {
       ...headers,
@@ -25,8 +25,13 @@ export const useFetch = async (url: string, data?: Data) => {
     },
   })
 
+  let jsonData
+  try {
+    jsonData = await res.json()
+  } catch (e) {}
+
   return {
     status: res.status,
-    data: await res.json()
+    data: (jsonData || null) as IData | null,
   }
 }

@@ -1,8 +1,16 @@
 <template>
   <div class="app">
     <Navbar />
-    <RouterView />
-    <Footer />
+
+    <div class="content">
+      <RouterView v-slot="{ Component }">
+        <!--<Transition name="slide-fade" mode="out-in">-->
+        <component :is="Component" />
+        <!--</Transition>-->
+      </RouterView>
+    </div>
+
+    <Footer class="footer" />
     <Notifications />
   </div>
 </template>
@@ -19,9 +27,48 @@ import Notifications from "@/components/layout/Notifications.vue"
 @import "@/assets/fonts/stylesheet.css";
 
 .app {
-  background: $white;
+  display: flex;
+  flex-direction: column;
+  gap: 4em;
+  min-height: 100vh;
+  background: $background;
   font-family: $regular;
-  color: $black;
+  color: $text;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 0 2em;
+}
+
+.footer {
+  margin-top: auto;
+}
+
+.router-view-enter-active,
+.router-view-leave-active {
+  transition: $transition;
+}
+
+.router-view-enter-from,
+.router-view-leave-to {
+  opacity: 0;
+}
+
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  /*transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);*/
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
 }
 </style>
 
@@ -34,6 +81,7 @@ html {
 
 body {
   margin: 0;
+  /*overflow-x: hidden;*/
 }
 
 h1,
@@ -46,7 +94,7 @@ p {
 }
 
 a {
-  color: $black;
+  color: inherit;
   text-decoration: none;
 }
 
@@ -57,9 +105,9 @@ img {
 input {
   padding: 1em 1.2em;
   border-radius: $radius;
-  border: 2px solid $accent;
+  border: 2px solid $secondary;
   background: #fff;
-  color: $black;
+  color: $text;
   font-size: 1rem;
   font-family: $regular;
   outline: none;

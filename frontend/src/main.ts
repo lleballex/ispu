@@ -6,15 +6,26 @@ import velocity from "velocity-animate"
 import { useCookies } from "vue3-cookies"
 import { library } from "@fortawesome/fontawesome-svg-core"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
-import { faSpinner, faTimes } from "@fortawesome/free-solid-svg-icons"
+import {
+  faSpinner,
+  faTimes,
+  faChevronDown,
+  faClock,
+  faCircleCheck,
+  faCircleXmark,
+  faCheck,
+} from "@fortawesome/free-solid-svg-icons"
 import { useUser } from "@/stores/user"
 import { useFetch } from "@/composables/fetch"
 import App from "@/App.vue"
 import MainPage from "@/pages/Main.vue"
+import WorkPage from "@/pages/Work.vue"
 import LoginPage from "@/pages/Login.vue"
+import StudentPage from "@/pages/student/Student.vue"
+import NewWorkPage from "@/pages/student/New.vue"
 import RegisterPage from "@/pages/Register.vue"
 
-library.add(faSpinner, faTimes)
+library.add(faSpinner, faTimes, faChevronDown, faClock, faCircleCheck, faCircleXmark, faCheck)
 
 const router = createRouter({
   history: createWebHistory(),
@@ -22,6 +33,9 @@ const router = createRouter({
     { path: "/", component: MainPage },
     { path: "/login", component: LoginPage },
     { path: "/register", component: RegisterPage },
+    { path: "/works/:id", component: WorkPage },
+    { path: "/student/works", component: StudentPage },
+    { path: "/student/works/new", component: NewWorkPage },
   ],
 })
 

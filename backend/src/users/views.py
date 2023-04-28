@@ -1,14 +1,17 @@
 from .utils import encode_auth_token
+from works.serializers import UserWorkListSerializer
+from .models import User, TeacherProfile
 from .serializers import UserSerializer, CreateStudentSerializer, \
-                         CreateTeacherSerializer
+                         CreateTeacherSerializer, PublicTeacherSerializer
 
 from rest_framework.views import APIView
 from rest_framework.request import Request
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
-from rest_framework.exceptions import ParseError, PermissionDenied
-from rest_framework.mixins import CreateModelMixin
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.mixins import CreateModelMixin, ListModelMixin
+from rest_framework.exceptions import ParseError, PermissionDenied
 
 
 class LoginView(APIView):
@@ -50,3 +53,25 @@ class RegisterUserView(CreateModelMixin, GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+
+
+
+class TeachersView(ListModelMixin, GenericAPIView):
+    queryset = User.objects.filter(teacher_profile__isnull=False)
+    serializer_class = PublicTeacherSerializer
+    
+    def get(self, request):
+        return self.list(request)
+
+
+class StudentWorksView(ListModelMixin, GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserWorkListSerializer
+
+    def get(self, request):
+        return self.list(request)
+
+    def get_queryset(self):
+        return self.request.user.student_profile.works.all()

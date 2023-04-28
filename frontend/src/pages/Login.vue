@@ -3,7 +3,7 @@
     <h1>Вход</h1>
     <input v-model="email" type="email" placeholder="Email" required />
     <input v-model="password" type="password" placeholder="Пароль" required />
-    <BaseButton :loading="loading">Войти 🔥</BaseButton>
+    <BaseButton :loading="loading">Войти</BaseButton>
     <BaseButton class="auth-form__link" type="text" link="/register"> Еще нет аккаунта </BaseButton>
   </AuthForm>
 </template>

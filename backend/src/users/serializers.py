@@ -1,7 +1,8 @@
 from .models import User, StudentProfile, TeacherProfile
 
 from django.db import transaction
-from rest_framework.serializers import CharField, ModelSerializer
+from rest_framework.serializers import CharField, ModelSerializer, \
+                                       SerializerMethodField
 
 
 class StudentProfileSerializer(ModelSerializer):
@@ -68,3 +69,14 @@ class CreateTeacherSerializer(ModelSerializer):
             id=profile_serializer.data['id'])
 
         return User.objects.create_user(**validated_data)
+
+
+class PublicTeacherSerializer(ModelSerializer):
+    teacher_id = SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'teacher_id']
+
+    def get_teacher_id(self, value):
+        return value.teacher_profile.id

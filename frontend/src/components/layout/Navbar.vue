@@ -1,12 +1,23 @@
 <template>
   <nav class="navbar">
-    <RouterLink to="/"><h2 class="navbar__title">Hello world</h2></RouterLink>
+    <img class="navbar__logo" src="@/assets/images/logo.svg" alt="s" />
+    <div class="navbar__block">
+      <RouterLink class="navbar__link" to="/">Каталог</RouterLink>
+      <a class="navbar__link" href="http://ivt.ispu.ru/index.php/home/kafedra-it" target="_blank"
+        >Кафедра ИТ</a
+      >
+    </div>
     <div v-if="!user.isAuthed" class="navbar__block">
-      <BaseButton type="text" link="/register">Регистрация</BaseButton>
-      <BaseButton link="/login">Войти</BaseButton>
+      <BaseButton class="navbar__primary-btn" type="primary" link="/login">Войти</BaseButton>
     </div>
     <div v-else>
-      <BurgerMenu :items="[{ content: 'Профиль' }, { content: '👋 Выйти', onClick: logout }]">
+      <BurgerMenu
+        :items="[
+          { content: 'Мои работы', link: '/student/works' },
+          { content: 'Добавить работу', link: '/student/works/new' },
+          { content: 'Выйти', onClick: logout },
+        ]"
+      >
         <div class="navbar__user-image-container">
           <img class="navbar__user-image" src="@/assets/images/user.svg" alt="" />
         </div>
@@ -39,18 +50,56 @@ const logout = () => {
   justify-content: space-between;
   align-items: center;
   padding: 1.3em 2em;
+  padding-bottom: 0;
+  /*background: $primary-simple;*/
+  /*color: $background;*/
   font-size: 1rem;
+}
+
+.navbar__logo {
+  width: 5em;
 }
 
 .navbar__block {
   display: flex;
-  gap: 2em;
+  gap: 3em;
+}
+
+.navbar__link {
+  position: relative;
+  color: $secondary;
+  font-size: 1.05em;
+
+  &:after {
+    content: "";
+    position: absolute;
+    bottom: -0.6em;
+    height: 2.5px;
+    left: 0;
+    right: 100%;
+    border-radius: $radius;
+    background: $primary;
+    transition: $transition;
+  }
+
+  &:hover:after {
+    right: 0;
+  }
+}
+
+.navbar__primary-btn {
+  border: none !important;
+  color: $primary-simple !important;
+
+  &:hover {
+    color: $background !important;
+  }
 }
 
 .navbar__user-image-container {
   position: relative;
-  width: 2.8em;
-  height: 2.8em;
+  width: 3em;
+  height: 3em;
   z-index: 1;
 
   &:after {
@@ -70,6 +119,6 @@ const logout = () => {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  box-shadow: 0 0 0 0.2em $white;
+  box-shadow: 0 0 0 0.2em $background;
 }
 </style>

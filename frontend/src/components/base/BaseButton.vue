@@ -5,6 +5,7 @@
     :class="type"
     :is="link ? RouterLink : 'button'"
     :to="link"
+    :type="tagType"
   >
     <transition name="button__loading">
       <span v-if="loading" class="button__loading"><icon icon="fa-solid fa-spinner" spin /></span>
@@ -22,6 +23,7 @@ interface Props {
   link?: string
   onClick?: () => void
   loading?: boolean
+  tagType?: "button"
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -45,7 +47,7 @@ const loading = toRef(props, "loading")
   background: none;
   font-weight: 600;
   font-size: 1rem;
-  color: $black;
+  color: $text;
   font-family: $regular;
   text-decoration: none;
   cursor: pointer;
@@ -53,21 +55,21 @@ const loading = toRef(props, "loading")
 
   &.primary {
     background: $primary;
-    color: $white;
+    color: $background;
 
     &:hover {
-      box-shadow: 0 0 10px 0px #c590fb;
+      box-shadow: $shadow-primary;
     }
   }
 
   &.secondary {
-    background: $white;
-    color: $accent;
-    border: 2px solid $accent;
+    background: $background;
+    color: $secondary;
+    border: 2px solid $secondary;
 
     &:hover {
-      background: $accent;
-      color: $white;
+      background: $secondary;
+      color: $background;
     }
   }
 
@@ -75,11 +77,11 @@ const loading = toRef(props, "loading")
     padding: 0;
     border-radius: 0;
     border: none;
-    color: $accent;
+    color: $secondary;
     font-weight: 400;
 
     &:hover {
-      color: $black;
+      color: $text;
     }
 
     &:active {

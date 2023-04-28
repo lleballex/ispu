@@ -5,10 +5,25 @@ $light: "Proxima Nova Lt";
 $transition: 0.3s;
 $transition-long: 0.6s;
 
-$primary: linear-gradient(43deg, #4158d0 0%, #c850c0 46%, #ffcc70 100%);
-$accent: #9363d0;
-$black: #454545;
-$white: #fff;
+//$primary: linear-gradient(43deg, #4158d0 0%, #c850c0 46%, #ffcc70 100%);
+//$accent: #9363d0;
+//$black: #454545;
+//$white: #fff;
+//$shadow: 0 0 30px #e7e3f4;
+
+//$primary-simple: #002f6c;
+//$primary-simple: #4f83cc;
+$primary-simple: #01579b;
+$primary: linear-gradient(90deg, #002fc6, #4f83cc);
+$secondary: red;
+//$secondary: #b2dfdb;
+$secondary: #82ada9;
+//$background: #e5ffff;
+$background: #fff;
+$background-hover: #f4f4f4;
 $shadow: 0 0 30px #e7e3f4;
+$shadow-primary: 0 0 10px #4f83cc;
+$accent: red;
+$text: #454545;
 
 $radius: 0.8em;
