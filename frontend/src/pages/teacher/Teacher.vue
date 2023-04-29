@@ -1,22 +1,23 @@
 <template>
   <div class="works">
-    <div class="works__header">
-      <h1 class="works__title">Мои работы</h1>
-      <BaseButton link="works/new">Добавить</BaseButton>
-    </div>
-    <p v-if="!works?.length" class="works__nothing">Ничего нет</p>
+    <p v-if="!works?.length">Ничего нет</p>
     <table v-else class="works__table">
       <tr class="works__table-head">
         <th>Название разработки</th>
-        <th>Научный руководитель</th>
+        <th>Автор</th>
         <th>Статус</th>
         <th>Сообщение</th>
       </tr>
-      <tr v-for="(work, idx) in works" class="works__table-row" :key="idx" @click="goToWork(work)">
+      <tr
+        v-for="work in works"
+        class="works__table-row"
+        :key="work.id"
+        @click="() => goToWork(work)"
+      >
         <td>{{ work.name }}</td>
-        <td>
+        <td class="works__table-author">
           {{
-            `${work.teacher.last_name} ${work.teacher.first_name[0]}. ${work.teacher.patronymic[0]}.`
+            `${work.student.last_name} ${work.student.first_name[0]}. ${work.student.patronymic[0]}.`
           }}
         </td>
         <td>
@@ -35,9 +36,8 @@
 <script lang="ts" setup>
 import { ref } from "vue"
 import { useRouter } from "vue-router"
-import BaseButton from "@/components/base/BaseButton.vue"
-import { useFetch } from "@/composables/fetch"
 import { UserWork } from "@/models/work"
+import { useFetch } from "@/composables/fetch"
 
 const works = ref<UserWork[] | null>(null)
 
@@ -59,7 +59,11 @@ const getStatusIcon = (work: UserWork) => {
 const router = useRouter()
 
 const goToWork = (work: UserWork) => {
-  router.push(`/works/${work.id}`)
+  if (work.status === "ACCEPTED") {
+    router.push(`/works/${work.id}`)
+  } else {
+    router.push(`/works/${work.id}/review`)
+  }
 }
 </script>
 
@@ -73,22 +77,6 @@ const goToWork = (work: UserWork) => {
   gap: 1.5em;
   width: fit-content;
   font-size: 1rem;
-}
-
-.works__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2em;
-}
-
-.works__title {
-  font-size: 2em;
-}
-
-.works__nothing {
-  margin-top: 2em;
-  text-align: center;
 }
 
 .works__table {
@@ -142,5 +130,9 @@ const goToWork = (work: UserWork) => {
   &.rejected {
     color: #e74c3c;
   }
+}
+
+.works__table-author {
+  white-space: nowrap;
 }
 </style>

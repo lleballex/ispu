@@ -47,7 +47,13 @@
         </div>
       </div>
 
-      <div class="works__list">
+      <div v-if="loading" class="works__loading">
+        <icon icon="fa-solid fa-spinner" spin />
+      </div>
+
+      <div v-else-if="!works?.length" class="works__nothing">Ничего нет</div>
+
+      <div v-else class="works__list">
         <RouterLink
           v-for="work in works"
           class="works__work"
@@ -68,7 +74,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue"
+import { ref, watch } from "vue"
 import { RouterLink } from "vue-router"
 import Button from "@/components/base/BaseButton.vue"
 import { useFetch } from "@/composables/fetch"
@@ -86,17 +92,10 @@ interface Work {
   field_category: Category
 }
 
+const loading = ref(false)
 const works = ref<Work[] | null>(null)
 const tasksCategories = ref<Category[] | null>(null)
 const fieldCategories = ref<Category[] | null>(null)
-
-useFetch<Work[]>("works").then((res) => {
-  console.log(res.data)
-  works.value = res.data
-  for (let i = 0; i < 10; i++) {
-    works.value.push(res.data[0])
-  }
-})
 
 useFetch<Category[]>("works/tasks-categories").then((res) => {
   tasksCategories.value = res.data
@@ -117,6 +116,8 @@ const toggleFieldCategory = (id: number) => {
   } else {
     aFieldCtgrs.value.push(id)
   }
+
+  loadWorks()
 }
 
 const toggleTasksCategory = (id: number) => {
@@ -126,7 +127,31 @@ const toggleTasksCategory = (id: number) => {
   } else {
     aTasksCtgrs.value.push(id)
   }
+
+  loadWorks()
 }
+
+const loadWorks = async () => {
+  loading.value = true
+
+  const { data, status } = await useFetch<Work[]>("works", {
+    params: {
+      query: searchQuery.value,
+      tasks_categories: aTasksCtgrs.value.join(", "),
+      field_categories: aFieldCtgrs.value.join(", "),
+    },
+  })
+
+  loading.value = false
+
+  if (status == 200) {
+    works.value = data
+  }
+}
+
+loadWorks()
+
+watch(searchQuery, loadWorks)
 </script>
 
 <style lang="scss" scoped>
@@ -211,8 +236,22 @@ const toggleTasksCategory = (id: number) => {
   color: $background;
 }
 
+.works__loading {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+  font-size: 2em;
+}
+
+.works__nothing {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 1.1em;
+}
+
 .works__list {
   display: flex;
+  align-self: flex-start;
   gap: 2.5em;
   flex-wrap: wrap;
   width: 100%;

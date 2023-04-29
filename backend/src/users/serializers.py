@@ -23,8 +23,8 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'student_profile',
-                  'teacher_profile']
+        fields = ['id', 'username', 'first_name', 'last_name', 'patronymic',
+                  'student_profile', 'teacher_profile']
 
 
 class CreateStudentSerializer(ModelSerializer):
@@ -76,7 +76,24 @@ class PublicTeacherSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'teacher_id']
+        fields = ['id', 'first_name', 'last_name', 'patronymic', 'teacher_id']
 
     def get_teacher_id(self, value):
         return value.teacher_profile.id
+
+
+class PublicStudentSerializer(ModelSerializer):
+    student_id = SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'patronymic', 'student_id']
+
+    def get_student_id(self, value):
+        return value.student_profile.id
+
+
+class PublicUserSerialzier(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'patronymic']

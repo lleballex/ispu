@@ -13,23 +13,25 @@ class TeacherProfile(models.Model):
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password, **kwargs):
-        email = self.normalize_email(email)
-        user = self.model(email=email, **kwargs)
+    def create_user(self, username, password, **kwargs):
+        user = self.model(username=username, **kwargs)
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, email, password, **kwargs):
+    def create_superuser(self, username, password, **kwargs):
         kwargs['is_staff'] = True
         kwargs['is_superuser'] = True
-        return self.create_user(email, password, **kwargs)
+        return self.create_user(username, password, **kwargs)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=20, unique=True)
+    email = models.EmailField(blank=True, null=True, unique=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    patronymic = models.CharField(max_length=50)
+
     student_profile = models.OneToOneField(StudentProfile, blank=True,
                                            null=True, on_delete=models.CASCADE)
     teacher_profile = models.OneToOneField(TeacherProfile, blank=True,
@@ -40,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
 
     EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'username'
 
     objects = UserManager()
 

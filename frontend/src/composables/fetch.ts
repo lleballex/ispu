@@ -1,9 +1,12 @@
 import { useCookies } from "vue3-cookies"
 
 interface Data {
-  method?: "GET" | "POST"
+  method?: "GET" | "POST" | "DELETE" | "PUT"
   body?: {
     [key: string]: any
+  }
+  params?: {
+    [key: string]: string
   }
 }
 
@@ -16,7 +19,18 @@ export const useFetch = async <IData>(url: string, data?: Data) => {
     headers["Auth-Token"] = authToken
   }
 
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/${url}/`, {
+  let params = ""
+
+  if (data?.params) {
+    Object.keys(data.params).forEach((param) => {
+      if (data.params?.[param]) {
+        !params ? (params = "?") : (params += "&")
+        params += `${param}=${data.params[param]}`
+      }
+    })
+  }
+
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/${url}/${params}`, {
     method: data?.method || "GET",
     body: JSON.stringify(data?.body),
     headers: {

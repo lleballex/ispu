@@ -1,14 +1,17 @@
 <template>
-  <div class="textarea" :data-placeholder="placeholder" contenteditable @input="onChange"></div>
+  <div class="textarea" :data-placeholder="placeholder" contenteditable @input="onChange">
+    {{ modelValue }}
+  </div>
 </template>
 
 <script lang="ts" setup>
-defineProps<{
+const { modelValue } = defineProps<{
   placeholder?: string
+  modelValue?: string
 }>()
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: string)
+  (e: "update:modelValue", value: string): void
 }>()
 
 const onChange = (e) => {

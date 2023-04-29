@@ -11,13 +11,7 @@
       <BaseButton class="navbar__primary-btn" type="primary" link="/login">Войти</BaseButton>
     </div>
     <div v-else>
-      <BurgerMenu
-        :items="[
-          { content: 'Мои работы', link: '/student/works' },
-          { content: 'Добавить работу', link: '/student/works/new' },
-          { content: 'Выйти', onClick: logout },
-        ]"
-      >
+      <BurgerMenu :items="getMenuItems(user)">
         <div class="navbar__user-image-container">
           <img class="navbar__user-image" src="@/assets/images/user.svg" alt="" />
         </div>
@@ -39,6 +33,27 @@ const { cookies } = useCookies()
 const logout = () => {
   user.logout()
   cookies.remove("authToken")
+}
+
+const getMenuItems = (user: any) => {
+  const items = []
+
+  if (user.studentProfile) {
+    items.push(
+      { content: "Мои работы", link: "/student/works" },
+      { content: "Добавить работу", link: "/student/works/new" }
+    )
+  }
+
+  if (user.teacherProfile) {
+    items.push({ content: "Управляемые работы", link: "/teacher/works" })
+  }
+
+  if (user.isAuthed) {
+    items.push({ content: "Выйти", onClick: logout })
+  }
+
+  return items
 }
 </script>
 
@@ -88,12 +103,12 @@ const logout = () => {
 }
 
 .navbar__primary-btn {
-  border: none !important;
-  color: $primary-simple !important;
+  /*border: none !important;*/
+  /*color: $primary-simple !important;*/
 
-  &:hover {
-    color: $background !important;
-  }
+  /*&:hover {*/
+  /*color: $background !important;*/
+  /*}*/
 }
 
 .navbar__user-image-container {

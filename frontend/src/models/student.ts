@@ -1,6 +1,7 @@
-export interface Teacher {
+export interface PublicStudent {
   id: number
-  number: number
+  student_id: number
   first_name: string
   last_name: string
+  patronymic: string
 }

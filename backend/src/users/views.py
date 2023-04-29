@@ -21,18 +21,18 @@ class LoginView(APIView):
         return Response(UserSerializer(request.user).data)
 
     def post(self, request: Request):
-        email = request.data.get('email')
+        username = request.data.get('username')
         password = request.data.get('password')
 
-        if not email:
-            raise ParseError('Email is not specified')
+        if not username:
+            raise ParseError('Username is not specified')
         if not password:
             raise ParseError('Password is not specified')
 
-        user = authenticate(email=email, password=password)
+        user = authenticate(username=username, password=password)
 
         if not user:
-            raise ParseError('Email or password is invalid')
+            raise ParseError('Username or password is invalid')
 
         return Response({
             'token': encode_auth_token(user.id),
@@ -66,12 +66,14 @@ class TeachersView(ListModelMixin, GenericAPIView):
         return self.list(request)
 
 
-class StudentWorksView(ListModelMixin, GenericAPIView):
-    permission_classes = [IsAuthenticated]
+class UserWorksView(ListModelMixin, GenericAPIView):
+    permission_classes = [IsAuthenticated]      # TODO: only for author or teacher
     serializer_class = UserWorkListSerializer
 
     def get(self, request):
         return self.list(request)
 
     def get_queryset(self):
-        return self.request.user.student_profile.works.all()
+        if self.request.user.student_profile:
+            return self.request.user.student_profile.works.all()
+        return self.request.user.teacher_profile.works.all()

@@ -9,5 +9,5 @@ urlpatterns = [
     
     path('teachers/', views.TeachersView.as_view()),
 
-    path('student/works/', views.StudentWorksView.as_view()),
+    path('works/', views.UserWorksView.as_view()),
 ]
