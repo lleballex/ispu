@@ -64,5 +64,10 @@ class Comment(models.Model):
     work = models.ForeignKey(Work, on_delete=models.CASCADE,
                              related_name='comments')
     base_comment = models.ForeignKey('self', on_delete=models.CASCADE,
-                                     related_name='replies', blank=True,
+                                     related_name='common_replies', blank=True,
                                      null=True)
+    reply_to = models.ForeignKey('self', on_delete=models.CASCADE,
+                                 related_name='replies', blank=True, null=True)
+
+    def __str__(self):
+        return self.text

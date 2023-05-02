@@ -97,6 +97,18 @@ const saveReview = async () => {
 .review__form-select {
   width: 20em;
   flex-shrink: 0;
+
+  &.active :deep(.select__header) {
+    border-radius: 0 0 1em 1em;
+  }
+
+  :deep(.select__items) {
+    top: auto;
+    bottom: 100%;
+    border-radius: 1em 1em 0 0;
+    border-bottom: none;
+    border-top: 1px solid $secondary;
+  }
 }
 
 .review__form-input {

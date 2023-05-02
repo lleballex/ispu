@@ -60,6 +60,7 @@ const getWorkAuthor = (work: Work) => {
 
 .work__header {
   display: flex;
+  align-items: flex-start;
   gap: 2em;
 }
 

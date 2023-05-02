@@ -10,36 +10,85 @@
       </div>
       <div class="comments__icon">
         <icon class="comments__icon-icon" icon="fa-regular fa-comment" />
-        <span>{{ work.comments.length }}</span>
+        <span>{{ work.comments_count }}</span>
       </div>
     </div>
     <form class="comments__form" @submit.prevent="sendComment">
       <img class="comments__user-img" src="@/assets/images/user.svg" />
-      <input
-        class="comments__form-input"
-        v-model="commentText"
-        type="text"
-        placeholder="Комментарий"
-      />
+      <div class="comments__form-input-container">
+        <span
+          v-if="newComment.replyTo"
+          class="comments__form-input-reply"
+          @click="cancelReplyToComment"
+          >{{ newComment.replyTo.user.first_name }} {{ newComment.replyTo.user.last_name }}
+        </span>
+        <input
+          class="comments__form-input"
+          v-model="newComment.text"
+          type="text"
+          placeholder="Комментарий"
+        />
+      </div>
       <icon @click="sendComment" class="comments__form-icon" icon="fa-solid fa-paper-plane" />
     </form>
     <div class="comments__list">
-      <div v-for="comment in work.comments" class="comments__comment" :key="comment.id">
-        <img class="comments__user-img" src="@/assets/images/user.svg" />
-        <div class="comments__comment-info">
-          <p class="comments__user-name">
-            {{ comment.user.first_name }} {{ comment.user.last_name }}
-          </p>
-          <p class="comments__comment-text">{{ comment.text }}</p>
+      <div v-for="comment in work.comments" class="comments__comment-container" :key="comment.id">
+        <div class="comments__comment">
+          <img class="comments__user-img" src="@/assets/images/user.svg" />
+          <div class="comments__comment-info">
+            <p class="comments__user-name">
+              {{ comment.user.first_name }} {{ comment.user.last_name }}
+            </p>
+            <p class="comments__comment-text">{{ comment.text }}</p>
+          </div>
+          <div class="comments__comment-actions">
+            <icon
+              class="comments__comment-action"
+              icon="fa-solid fa-reply"
+              @click="() => replyToComment(comment, comment)"
+            />
+            <icon
+              v-if="comment.user.id === user.id"
+              class="comments__comment-action"
+              icon="fa-solid fa-trash"
+              @click="() => deleteComment(comment)"
+            />
+          </div>
         </div>
-        <div class="comments__comment-actions">
-          <icon class="comments__comment-action" icon="fa-solid fa-reply" />
-          <icon
-            v-if="comment.user.id === user.id"
-            class="comments__comment-action"
-            icon="fa-solid fa-trash"
-            @click="() => deleteComment(comment)"
-          />
+        <Button
+          v-if="comment.replies.length && !comment.areRepliesShowed"
+          class="comments__comment-replies-btn"
+          @click="() => (comment.areRepliesShowed = true)"
+          type="text"
+          >Ответы ({{ comment.replies.length }})</Button
+        >
+        <div
+          v-else-if="comment.replies.length && comment.areRepliesShowed"
+          class="comments__list"
+          style="margin-left: 3.5em"
+        >
+          <div v-for="reply in comment.replies" class="comments__comment" :key="reply.id">
+            <img class="comments__user-img" src="@/assets/images/user.svg" />
+            <div class="comments__comment-info">
+              <p class="comments__user-name">
+                {{ reply.user.first_name }} {{ reply.user.last_name }}
+              </p>
+              <p class="comments__comment-text">{{ reply.reply_to }}, {{ reply.text }}</p>
+            </div>
+            <div class="comments__comment-actions">
+              <icon
+                class="comments__comment-action"
+                icon="fa-solid fa-reply"
+                @click="() => replyToComment(reply, comment)"
+              />
+              <icon
+                v-if="reply.user.id === user.id"
+                class="comments__comment-action"
+                icon="fa-solid fa-trash"
+                @click="() => deleteComment(reply)"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -47,12 +96,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue"
+import { reactive } from "vue"
 import { notify } from "@kyvg/vue3-notification"
 import { useUser } from "@/stores/user"
 import { Work } from "@/models/work"
 import { useFetch } from "@/composables/fetch"
 import { Comment } from "@/models/comment"
+import Button from "./base/BaseButton.vue"
 
 const { work } = defineProps<{
   work: Work
@@ -60,7 +110,11 @@ const { work } = defineProps<{
 
 const user = useUser()
 
-const commentText = ref("")
+const newComment = reactive({
+  text: "",
+  baseComment: null as Comment | null,
+  replyTo: null as Comment | null,
+})
 
 const toggleLike = async () => {
   if (!user.isAuthed) {
@@ -102,12 +156,16 @@ const sendComment = async () => {
     method: "POST",
     body: {
       work: work.id,
-      text: commentText.value,
+      text: newComment.text,
+      base_comment: newComment.baseComment?.id,
+      reply_to: newComment.replyTo?.id,
     },
   })
 
   if (status == 201) {
-    commentText.value = ""
+    newComment.text = ""
+    newComment.baseComment = null
+    newComment.replyTo = null
     if (data)
       work.comments.unshift({
         id: data.id,
@@ -140,6 +198,16 @@ const deleteComment = async (comment: Comment) => {
       work.comments.splice(work.comments.indexOf(comment), 1)
     }
   }
+}
+
+const replyToComment = (comment: Comment, baseComment: Comment) => {
+  newComment.replyTo = comment
+  newComment.baseComment = baseComment
+}
+
+const cancelReplyToComment = () => {
+  newComment.replyTo = null
+  newComment.baseComment = null
 }
 </script>
 
@@ -198,10 +266,40 @@ const deleteComment = async (comment: Comment) => {
   gap: 1em;
 }
 
-.comments__form-input {
-  padding: 0.7em 1em;
+.comments__form-input-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0 1em;
   width: 100%;
+  border: 2px solid $secondary;
   border-radius: 10em;
+}
+
+.comments__form-input-reply {
+  padding: 0.3em 0.5em;
+  margin-left: -0.6em;
+  background: #ececec;
+  white-space: nowrap;
+  border-radius: 10em;
+  font-size: 0.9em;
+  transition: $transition;
+
+  &:hover {
+    background: #ddd;
+    cursor: pointer;
+  }
+}
+
+.comments__form-input {
+  padding: 0.7em 0;
+  width: 100%;
+  border: none;
+  background: none;
+
+  &:after {
+    content: "sdfsss";
+  }
 }
 
 .comments__form-icon {
@@ -226,6 +324,12 @@ const deleteComment = async (comment: Comment) => {
   display: flex;
   flex-direction: column;
   gap: 1.6em;
+}
+
+.comments__comment-container {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
 }
 
 .comments__comment {
@@ -264,5 +368,10 @@ const deleteComment = async (comment: Comment) => {
     transform: scale(1.2);
     cursor: pointer;
   }
+}
+
+.comments__comment-replies-btn {
+  margin: -1em 0 0 3.5em;
+  align-self: flex-start;
 }
 </style>
