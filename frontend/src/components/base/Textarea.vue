@@ -1,14 +1,26 @@
 <template>
-  <div class="textarea" :data-placeholder="placeholder" contenteditable @input="onChange">
-    {{ modelValue }}
-  </div>
+  <div
+    ref="divRef"
+    class="textarea"
+    :data-placeholder="placeholder"
+    contenteditable
+    @input="onChange"
+  ></div>
 </template>
 
 <script lang="ts" setup>
+import { ref, onMounted } from "vue"
+
 const { modelValue } = defineProps<{
   placeholder?: string
   modelValue?: string
 }>()
+
+const divRef = ref<HTMLDivElement | null>(null)
+
+onMounted(() => {
+  if (divRef.value && modelValue) divRef.value.innerText = modelValue
+})
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: string): void
