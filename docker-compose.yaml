@@ -1,4 +1,12 @@
 services:
+  database:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    env_file: ./backend/.env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q"]
+ 
   backend:
     build: ./backend
     env_file:
@@ -7,6 +15,10 @@ services:
       - 8000
     volumes:
       - ./backend/src/db:/app/src/db
+    depends_on:
+      database:
+        condition: service_healthy
+
   frontend:
     build: ./frontend
     env_file:
@@ -15,12 +27,15 @@ services:
       - 5173 
     volumes:
       - front-dist:/app/dist
+        
   nginx:
     build: ./nginx
     ports: 
       - 80:80
     volumes:
       - front-dist:/app
+    depends_on:
+      - backend
 
 volumes:
   front-dist:
