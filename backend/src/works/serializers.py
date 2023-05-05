@@ -58,7 +58,7 @@ class WorkSerializer(ModelSerializer):
                   'keywords', 'status', 'comments', 'likes',
                   'is_liked', 'message', 'comments_count',
                   'tasks_category', 'field_category'] # TODO: message only for teacher review
-        read_only_fields = ['message']
+        read_only_fields = ['message', 'comments']
 
     def to_representation(self, instance):
         # print(instance)

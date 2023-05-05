@@ -29,7 +29,13 @@ class LoginView(APIView):
         if not password:
             raise ParseError('Password is not specified')
 
-        user = authenticate(username=username, password=password)
+        user = User.objects.get(username=username)
+
+        if user.temp_password:
+            if user.password != password:
+                user = None
+        else:
+            user = authenticate(username=username, password=password)
 
         if not user:
             raise ParseError('Username or password is invalid')
@@ -74,6 +80,18 @@ class UserWorksView(ListModelMixin, GenericAPIView):
         return self.list(request)
 
     def get_queryset(self):
-        if self.request.user.student_profile:
+        try:
+            self.request.user.student_profile
+        except:
+            pass
+        else:
             return self.request.user.student_profile.works.all()
-        return self.request.user.teacher_profile.works.all()
+
+        try:
+            self.request.user.teacher_profile
+        except:
+            pass
+        else:
+            return self.request.user.teacher_profile.works.all()
+
+        return []

@@ -76,10 +76,18 @@ class WorkView(RetrieveModelMixin, DestroyModelMixin, GenericAPIView):
         query = Q(status='ACCEPTED')
 
         if self.request.user.is_authenticated:
-            if self.request.user.teacher_profile:
+            try:
+                self.request.user.teacher_profile
+            except:
+                pass
+            else:
                 query.add(Q(teacher=self.request.user.teacher_profile.id), Q.OR)
 
-            if self.request.user.student_profile:
+            try:
+                self.request.user.student_profile
+            except:
+                pass
+            else:
                 query.add(Q(student=self.request.user.student_profile.id), Q.OR)
 
         return Work.objects.filter(query)

@@ -2,16 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 
-class StudentProfile(models.Model):
-    number = models.IntegerField(unique=True)
-    course = models.IntegerField()
-    group = models.CharField(max_length=10)
-    
-
-class TeacherProfile(models.Model):
-    pass
-
-
 class UserManager(BaseUserManager):
     def create_user(self, username, password, **kwargs):
         user = self.model(username=username, **kwargs)
@@ -32,14 +22,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=50)
     patronymic = models.CharField(max_length=50)
 
-    student_profile = models.OneToOneField(StudentProfile, blank=True,
-                                           null=True, on_delete=models.CASCADE)
-    teacher_profile = models.OneToOneField(TeacherProfile, blank=True,
-                                           on_delete=models.CASCADE, null=True)
+    # student_profile = models.OneToOneField(StudentProfile, blank=True,
+                                           # null=True, on_delete=models.CASCADE)
+    # teacher_profile = models.OneToOneField(TeacherProfile, blank=True,
+                                           # on_delete=models.CASCADE, null=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    
+    temp_password = models.BooleanField(default=True)
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username'
@@ -47,10 +39,22 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
 
-# class Achievement(models.Model):
-    # student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE,
-                                # related_name='achievements')
+class StudentProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                related_name='student_profile')
+    number = models.IntegerField(unique=True)
+    course = models.IntegerField()
+    group = models.CharField(max_length=10)
 
-    # is_approved = models.BooleanField(default=False)
-    # is_pending = models.BooleanField(default=True)
-    # message = models.TextField(null=True)
+    def __str__(self):
+        return (f'{self.user.last_name} {self.user.first_name} '
+                f'{self.user.patronymic}')
+
+
+class TeacherProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                related_name='teacher_profile')
+
+    def __str__(self):
+        return (f'{self.user.last_name} {self.user.first_name} '
+                f'{self.user.patronymic}')
