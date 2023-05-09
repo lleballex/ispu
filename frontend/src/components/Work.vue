@@ -5,7 +5,7 @@
       <slot></slot>
     </div>
     <p>{{ getWorkAuthor(work) }}</p>
-    <div class="work__block">
+    <div v-if="work.keywords.length" class="work__block">
       <p class="work__block-title">Ключевые слова</p>
       <p class="work__block-content">{{ work.keywords.join(", ") }}</p>
     </div>
@@ -22,7 +22,7 @@
       <p class="work__block-content">{{ work.novelty }}</p>
     </div>
     <div class="work__block">
-      <p class="work__block-title">Практическая значиость</p>
+      <p class="work__block-title">Практическая значимость</p>
       <p class="work__block-content">{{ work.significance }}</p>
     </div>
     <div class="work__block">

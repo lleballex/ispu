@@ -2,7 +2,8 @@ from .utils import encode_auth_token
 from works.serializers import UserWorkListSerializer
 from .models import User, TeacherProfile
 from .serializers import UserSerializer, CreateStudentSerializer, \
-                         CreateTeacherSerializer, PublicTeacherSerializer
+                         CreateTeacherSerializer, PublicTeacherSerializer, \
+                         CreateUserSerializer
 
 from rest_framework.views import APIView
 from rest_framework.request import Request
@@ -47,15 +48,17 @@ class LoginView(APIView):
 
 
 class RegisterUserView(CreateModelMixin, GenericAPIView):
-    def get_serializer_class(self):
-        role = self.request.data.get('role')
+    serializer_class = CreateUserSerializer
+
+    # def get_serializer_class(self):
+        # role = self.request.data.get('role')
     
-        if role == 'student':
-            return CreateStudentSerializer
-        elif role == 'teacher':
-            return CreateTeacherSerializer
-        else:
-            raise ParseError('Wrong role is specified')
+        # if role == 'student':
+            # return CreateStudentSerializer
+        # elif role == 'teacher':
+            # return CreateTeacherSerializer
+        # else:
+            # raise ParseError('Wrong role is specified')
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)

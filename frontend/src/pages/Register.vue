@@ -1,16 +1,24 @@
 <template>
   <AuthForm :on-submit="register">
     <h1>Регистрация</h1>
+    <p style="line-height: 1.6em; margin: -0.5em 0 -0.2em">
+      Внимание! Если вы - студент или научный руководитель, обратитесь в свой вуз для регистрации на
+      платформе. Эта форма только для посетителей сайта
+    </p>
+    <input v-model="username" type="text" placeholder="Логин" required />
     <input v-model="email" type="email" placeholder="Email" required />
     <input v-model="password" type="password" placeholder="Пароль" required />
     <div class="labeled-block">
-      <p>Как {{ role === "student" ? "тебя" : "вас" }} зовут?</p>
+      <p>Как вас зовут?</p>
       <div class="h-block">
         <input v-model="firstName" type="text" placeholder="Имя" required />
         <input v-model="lastName" type="text" placeholder="Фамилия" required />
       </div>
+      <div class="h-block" style="margin-top: 0.4em">
+        <input v-model="patronymic" type="text" placeholder="Отчество" required />
+      </div>
     </div>
-    <div class="labeled-block">
+    <div v-if="false" class="labeled-block">
       <p>Кем {{ role === "student" ? "ты являешься" : "вы являтесь" }}?</p>
       <Switch
         v-model="role"
@@ -18,7 +26,7 @@
         :items="{ student: 'Студент', teacher: 'Преподаватель' }"
       />
     </div>
-    <Transition name="nonable">
+    <Transition v-if="false" name="nonable">
       <div v-if="role === 'student'" class="labeled-block">
         <p>Немного информации о твоем обучении:</p>
         <div class="v-block">
@@ -35,7 +43,7 @@
         </div>
       </div>
     </Transition>
-    <BaseButton :loading="loading">Создать аккаунт 🔥</BaseButton>
+    <BaseButton :loading="loading">Создать аккаунт</BaseButton>
     <BaseButton class="auth-form__link" type="text" link="/login">Уже есть аккаунт</BaseButton>
   </AuthForm>
 </template>
@@ -51,11 +59,13 @@ import BaseButton from "@/components/base/BaseButton.vue"
 
 const router = useRouter()
 
+const username = ref("")
 const email = ref("")
 const password = ref("")
 const role = ref("student")
 const firstName = ref("")
 const lastName = ref("")
+const patronymic = ref("")
 const loading = ref(false)
 
 const studentProfile = ref({
@@ -70,13 +80,15 @@ const register = async () => {
   const res = await useFetch("users", {
     method: "POST",
     body: {
+      username: username.value,
       email: email.value,
       password: password.value,
-      role: role.value,
+      /*role: role.value,*/
       first_name: firstName.value,
       last_name: lastName.value,
-      student_profile: studentProfile.value,
-      teacher_profile: {},
+      patronymic: patronymic.value,
+      /*student_profile: studentProfile.value,*/
+      /*teacher_profile: {},*/
     },
   })
 
@@ -85,15 +97,13 @@ const register = async () => {
   if (res.status == 201) {
     notify({
       type: "success",
-      text: `Супер! Теперь ${
-        role.value === "student" ? "ты можешь" : "вы можете"
-      } войти в свой аккаунт`,
+      text: `Супер! Теперь вы можете войти в свой аккаунт`,
     })
     router.push("/login")
   } else {
     console.log(res)
     notify({
-      text: "Something went wrong",
+      text: "Что-то пошло не так",
       type: "error",
     })
   }

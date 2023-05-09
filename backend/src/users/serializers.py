@@ -27,6 +27,20 @@ class UserSerializer(ModelSerializer):
                   'student_profile', 'teacher_profile']
 
 
+class CreateUserSerializer(ModelSerializer):
+    password = CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password', 'first_name', 'last_name',
+                  'patronymic']
+
+    @transaction.atomic()
+    def create(self, validated_data):
+        validated_data['temp_password'] = False
+        return User.objects.create_user(**validated_data)
+
+
 class CreateStudentSerializer(ModelSerializer):
     password = CharField(write_only=True)
     student_profile = StudentProfileSerializer()
@@ -36,7 +50,7 @@ class CreateStudentSerializer(ModelSerializer):
         fields = ['email', 'password', 'first_name', 'last_name',
                   'student_profile']
 
-    @transaction.atomic
+    @transaction.atomic()
     def create(self, validated_data):
         profile = validated_data.pop('student_profile')
         profile_serializer = StudentProfileSerializer(data=profile)
@@ -58,7 +72,7 @@ class CreateTeacherSerializer(ModelSerializer):
         fields = ['email', 'password', 'first_name', 'last_name',
                   'teacher_profile']
 
-    @transaction.atomic
+    @transaction.atomic()
     def create(self, validated_data):
         profile = validated_data.pop('teacher_profile')
         profile_serializer = TeacherProfileSerializer(data=profile)

@@ -57,7 +57,7 @@ const router = createRouter({
   routes: [
     { path: "/", component: MainPage },
     { path: "/login", component: LoginPage },
-    //{ path: "/register", component: RegisterPage },
+    { path: "/register", component: RegisterPage },
     { path: "/works/:id", component: WorkPage },
     { path: "/works/:id/review", component: WorkReviewPage },
     { path: "/works/:id/update", component: WorkUpdatePage },

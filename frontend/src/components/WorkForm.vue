@@ -16,11 +16,26 @@
       <Textarea v-model="work.novelty" placeholder="Научная новизна" />
       <input v-model="work.field" type="text" placeholder="Область применения" required />
       <Textarea v-model="work.tasks" placeholder="Задачи" />
-      <Textarea v-model="work.significance" placeholder="Практическая значимость" />
-      <Textarea v-model="work.tools" placeholder="Средства разработки" />
-      <input v-model="work.aprobation" type="text" placeholder="Апробация результатов" required />
+      <div class="new-work__field-container">
+        <Textarea v-model="work.significance" placeholder="Практическая значимость" />
+        <p>Расскажи об эффекте, получаемом от использования инновации</p>
+      </div>
+      <div class="new-work__field-container">
+        <Textarea v-model="work.tools" placeholder="Средства разработки" />
+        <p>
+          Приведи описание методов и методик, математических моделей, используемых для создания
+          инновации; спецификации на внедрение (программное обеспечение, языки программирования и
+          т.д.), их доступности
+        </p>
+      </div>
+      <div class="new-work__field-container">
+        <input v-model="work.aprobation" type="text" placeholder="Апробация результатов" required />
+        <p>
+          Укажи методы апробации, которые были использованы для проверки и оценки полученных
+          результатов. Например, участие в конференции, внедрение инновации на предприятие
+        </p>
+      </div>
       <KeywordsField v-model="work.keywords" placeholder="Ключевые слова" />
-      related works
       <Select
         v-model="work.tasks_category"
         :items="tasksCategories"
